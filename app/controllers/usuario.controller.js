@@ -57,12 +57,12 @@ exports.login = async (req, res) => {
 
     const usuario = query[0]?.dataValues;
     if (!usuario) {
-      return res.status(404).send({ message: "Usuario no registrado." });
+      return res.status(404).send({ mensaje: "Usuario no registrado." });
     }
 
     const validPassword = await bcrypt.compare(contrasena, usuario.contrasena);
     if (!validPassword) {
-      return res.status(401).send({ message: "Contraseña incorrecta." });
+      return res.status(401).send({ mensaje: "Contraseña incorrecta." });
     }
 
     const token = jwt.sign(
@@ -71,9 +71,9 @@ exports.login = async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    return res.send({ message: "Login exitoso", access_token: token });
+    return res.send({ mensaje: "Sesion Iniciada.", access_token: token });
   } catch (err) {
-    return res.status(401).send({ message: err.message });
+    return res.status(401).send({ mensaje: err.message });
   }
 };
 
