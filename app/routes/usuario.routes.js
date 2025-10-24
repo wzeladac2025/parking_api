@@ -57,7 +57,7 @@ module.exports = (app) => {
    *           schema:
    *             type: object
    *             properties:
-   *                correo:
+   *                placa:
    *                  type: string
    *                contrasena:
    *                  type: string
