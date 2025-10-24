@@ -56,7 +56,7 @@ exports.findAll = (req, res) => {
     });
 };
 
-exports.findOne = async (req, res) => {
+exports.findById = async (req, res) => {
   try {
     const usuario = await Usuario.findOne({
       where: { correo: req.body.correo },
