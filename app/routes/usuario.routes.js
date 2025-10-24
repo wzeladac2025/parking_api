@@ -18,6 +18,8 @@ module.exports = (app) => {
    *             properties:
    *                correo:
    *                  type: string
+   *                tipoPlaca:
+   *                  type: string 
    *                placa:
    *                  type: string
    *                contrasena:
