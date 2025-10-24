@@ -15,7 +15,7 @@ const swaggerDefinition = {
   info: {
     title: "Backend Parking Web Services",
     version: "1.0.0",
-    description: "API Web Services Proyecto Parking",
+    description: "API Web Services Proyecto Parking - Arquitectura de Computadoras II - Grupo 4",
   },
   components,
 };

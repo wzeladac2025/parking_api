@@ -11,18 +11,6 @@ module.exports = (app) => {
    *     tags: [Parqueo]
    *     security:
    *        - bearerAuth: []
-   *     requestBody:
-   *       required: true
-   *       content:
-   *         application/json:
-   *           schema:
-   *             type: object
-   *             properties:
-   *                identificador:
-   *                  type: string
-   *                estado:
-   *                  type: string
-   *                  enum: [libre, ocupado, reversado]
    *     responses:
    *       200:
    *         description: Parqueos creados
@@ -49,6 +37,33 @@ module.exports = (app) => {
    */
   router.get("/:id", security.ROLE_TODOS, parqueo.findById);
 
+      /**
+   * @swagger
+   * /api/parqueo/update/{id}:
+   *   put:
+   *     summary: Actualizar parqueo por id
+   *     tags: [Parqueo]
+   *     security:
+   *        - bearerAuth: [] 
+   *     parameters:
+   *        - in: path
+   *          name: id
+   *          type: string
+   *     description: Actualizar parqueo por id
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *                estado:
+   *                  type: string
+   *                  enum: [libre, ocupado, reservado]
+   *     responses:
+   *       200:
+   *         description: Parqueo actualizado
+   */  
   router.put("/update/:id", security.ROLE_TODOS, parqueo.update);
 
   app.use("/api/parqueo", router);

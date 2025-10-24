@@ -26,19 +26,16 @@ exports.create = async (req, res) => {
     };
 
     const usuarioJson = Usuario.build(usuario);
-    const nuevoUsuario = await usuarioJson
-      .save()
-      .then(() => {
-        return res.status(200).send({
-          mensaje: "Usuario registrado exitosamente.",
-          correo: nuevoUsuario.correo,
-        });
-      })
-      .catch(() => {
-        return res.status(500).send({
-          mensaje: "El numero de placa ya se encuentra registrado.",
-        });
+    const nuevoUsuario = await usuarioJson.save().catch(() => {
+      return res.status(500).send({
+        mensaje: "El numero de placa ya se encuentra registrado.",
       });
+    });
+
+    return res.status(200).send({
+      mensaje: "Usuario registrado exitosamente.",
+      correo: nuevoUsuario.correo,
+    });
   } catch (err) {
     return res.status(500).send({ mensaje: err.message });
   }
@@ -99,51 +96,4 @@ exports.findById = async (req, res) => {
     correo: usuario.correo,
     role: usuario.role,
   });
-};
-
-exports.update = (req, res) => {
-  const id = req.params.id;
-
-  Usuario.update(req.body, {
-    where: { id: id },
-  })
-    .then((num) => {
-      if (num == 1) {
-        res.send({
-          message: "Usuario actualizado exitosamente.",
-        });
-      } else {
-        res.send({
-          message: "No se pudo actualizar al usuario.",
-        });
-      }
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: "Error al actualizar el usuario.",
-      });
-    });
-};
-
-exports.delete = (req, res) => {
-  const id = req.params.id;
-  Usuario.destroy({
-    where: { id: id },
-  })
-    .then((num) => {
-      if (num == 1) {
-        res.send({
-          message: "Usuario dado de baja.",
-        });
-      } else {
-        res.send({
-          message: "No se pudo dar de baja al usuario.",
-        });
-      }
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: "Error al dar de baja al usuario.",
-      });
-    });
 };

@@ -1,133 +1,98 @@
 const db = require("../models");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-
-const Op = db.Sequelize.Op;
-const Usuario = db.usuario;
+const Parqueo = db.parqueo;
 
 exports.generarParqueos = async (req, res) => {
-  let response = null;
+  await Parqueo.destroy({ where: {} });
+  db.sequelize
+    .query("ALTER SEQUENCE PARQUEO_SEQ RESTART WITH 1")
+    .catch(() => {});
+
   try {
-    if (!req.body.correo && !req.body.contrasena) {
-      res.status(400).send({
-        message: "Necesita ingresar el correo y la contraseña.",
-      });
-      return;
+    let parqueos = [];
+    for (let index = 1; index <= 10; index++) {
+      let parqueo = {
+        id: index,
+        identificador: "PARQUEO" + index,
+        estado: "libre",
+      };
+      parqueos.push(parqueo);
     }
 
-    const hashedPassword = await bcrypt.hash(req.body.contrasena, 10);
-
-    const usuarioObj = {
-      correo: req.body.correo,
-      contrasena: hashedPassword,
-      role: req.body.role,
-    };
-
-    const usuario = Usuario.build(usuarioObj);
-    const nuevoUsuario = await usuario.save().catch((err) => {
-      res.status(500).send({
-        message:
-          err.message ||
-          "Error al crear el usuario. Consulte a su administrador.",
-      });
-    });
-
-    //AGREGAR OBJETOS DE HUESPED, EMPLEADO BASE
-
-    res.send(nuevoUsuario);
+    await Parqueo.bulkCreate(parqueos);
+    res.send({ mensaje: "Parqueos creados" });
   } catch (err) {
     res.status(500).send({ message: err.message });
     console.log("hubo un error inesperado", err.message);
   }
 };
 
-exports.findAll = (req, res) => {
-  const nombre = req.query.correo;
-  var condition = nombre ? { nombre: { [Op.iLike]: "%${nombre}%" } } : null;
-
-  Usuario.findAll({ where: condition })
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Error al obtener los usuarios.",
-      });
-    });
-};
-
 exports.findById = async (req, res) => {
-  try {
-    const usuario = await Usuario.findOne({
-      where: { correo: req.body.correo },
-    });
-    if (!usuario) {
-      return res.status(404).send({ message: "Usuario no encontrado." });
-    }
-
-    const validPassword = await bcrypt.compare(
-      req.body.contrasena,
-      usuario.contrasena
-    );
-    if (!validPassword) {
-      return res.status(401).send({ message: "Contraseña incorrecta." });
-    }
-
-    const token = jwt.sign(
-      { id: usuario.id, role: usuario.role },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
-    );
-
-    res.send({ message: "Login exitoso", token });
-  } catch (err) {
-    res.status(500).send({ message: err.message });
-  }
-};
-
-exports.update = (req, res) => {
   const id = req.params.id;
-
-  Usuario.update(req.body, {
-    where: { id: id },
-  })
-    .then((num) => {
-      if (num == 1) {
-        res.send({
-          message: "Usuario actualizado exitosamente.",
-        });
-      } else {
-        res.send({
-          message: "No se pudo actualizar al usuario.",
-        });
-      }
+  const query = await db.sequelize
+    .query("select * from parqueos where id = " + id, {
+      model: Parqueo,
+      mapToModel: true,
     })
     .catch((err) => {
-      res.status(500).send({
-        message: "Error al actualizar el usuario.",
+      return res.status(500).send({
+        message: err.message || "Error al obtener el parqueo.",
       });
     });
+
+  const parqueo = query[0]?.dataValues;
+  if (!parqueo) {
+    return res.status(404).send({ message: "Parqueo no registrado." });
+  }
+  return res.send({
+    id: parqueo.id,
+    estado: parqueo.estado,
+  });
 };
 
-exports.delete = (req, res) => {
+exports.update = async (req, res) => {
   const id = req.params.id;
-  Usuario.destroy({
-    where: { id: id },
-  })
-    .then((num) => {
-      if (num == 1) {
-        res.send({
-          message: "Usuario dado de baja.",
+  const query = await db.sequelize
+    .query("select * from parqueos where id = " + id, {
+      model: Parqueo,
+      mapToModel: true,
+    })
+    .catch((err) => {
+      return res.status(500).send({
+        message: err.message || "Error al obtener el parqueo.",
+      });
+    });
+
+  const parqueo = query[0]?.dataValues;
+  if (!parqueo) {
+    return res.status(404).send({ message: "Parqueo no registrado." });
+  }
+
+  //ACTUALIZAR ESTADO
+  const parqueoActualizado = await Parqueo.update(
+    {
+      estado: req.body.estado,
+    },
+    {
+      where: {
+        id: parqueo.id,
+      },
+    }
+  )
+    .then((id) => {
+      if (id == 1) {
+        return res.status(200).send({
+          id: parqueo.id,
+          estado: req.body.estado,
         });
       } else {
-        res.send({
-          message: "No se pudo dar de baja al usuario.",
+        return res.status(401).send({
+          mensaje: "No se actualizo el parqueo.",
         });
       }
     })
-    .catch((err) => {
-      res.status(500).send({
-        message: "Error al dar de baja al usuario.",
+    .catch(() => {
+      return res.status(500).send({
+        mensaje: "Error al actualizar el parqueo.",
       });
     });
 };

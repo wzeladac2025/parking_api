@@ -87,9 +87,5 @@ module.exports = (app) => {
    */
   router.get("/:id", security.ROLE_TODOS, usuario.findById);
 
-  router.put("/update/:id", security.ROLE_TODOS, usuario.update);
-
-  router.delete("/delete/:id", security.ROLE_ADMIN, usuario.delete);
-
   app.use("/api/usuario", router);
 };
