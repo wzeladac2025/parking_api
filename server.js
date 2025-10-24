@@ -33,7 +33,7 @@ db.sequelize.sync();
  *         description: Test Proyecto Levantado
  */
 app.get("/", (req, res) => {
-  res.json({ message: "Proyecto Hotel Backend UP" });
+  res.json({ message: "Proyecto Parking API ✅" });
 });
 
 try {
