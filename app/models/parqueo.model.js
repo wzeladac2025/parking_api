@@ -5,7 +5,7 @@ module.exports = (sequelize, Sequelize) => {
     )
     .catch(() => { });
 
-  const Pago = sequelize.define("pago", {
+  const Parqueo = sequelize.define("parqueo", {
     id: {
       type: Sequelize.INTEGER,
       primaryKey: true,
@@ -18,5 +18,5 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.ENUM("libre", "ocupado", "reservado"),
     },    
   });
-  return Pago;
+  return Parqueo;
 };
