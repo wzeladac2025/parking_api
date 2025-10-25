@@ -19,6 +19,22 @@ module.exports = (app) => {
    */
   router.get("/generar/", parqueo.generarParqueos);
 
+    /**
+   * @swagger
+   * /api/parqueo/obtener/:
+   *   get:
+   *     summary: Obtener Parqueos
+   *     tags: [Parqueo]
+   *     security:
+   *        - bearerAuth: []
+   *     responses:
+   *       200:
+   *         description: Parqueos obtenidos
+   *       400:
+   *         description: Error al obtener parqueos
+   */
+  router.get("/obtener/", security.ROLE_TODOS, parqueo.obtenerParqueos);
+
   /**
    * @swagger
    * /api/parqueo/{id}:

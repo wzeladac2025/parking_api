@@ -26,6 +26,13 @@ exports.generarParqueos = async (req, res) => {
   }
 };
 
+exports.obtenerParqueos = async (req, res) => {
+  const parqueos = await Parqueo.findAll({
+    order: [["id", "ASC"]],
+  });
+  return res.status(200).send(parqueos);
+};
+
 exports.findById = async (req, res) => {
   const id = req.params.id;
   const query = await db.sequelize
@@ -68,7 +75,7 @@ exports.update = async (req, res) => {
   }
 
   //ACTUALIZAR ESTADO
-  const parqueoActualizado = await Parqueo.update(
+  await Parqueo.update(
     {
       estado: req.body.estado,
     },
