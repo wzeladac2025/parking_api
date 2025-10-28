@@ -17,7 +17,7 @@ module.exports = (app) => {
    *       400:
    *         description: Error al crear parqueos
    */
-  router.get("/generar/", parqueo.generarParqueos);
+  router.get("/generar/", security.ROLE_TODOS, parqueo.generarParqueos);
 
   /**
    * @swagger

@@ -1,64 +1,52 @@
 const db = require("../models");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-
-const Op = db.Sequelize.Op;
-const Usuario = db.usuario;
+const Reserva = db.reserva;
 
 exports.create = async (req, res) => {
-  let response = null;
   try {
-    if (!req.body.correo && !req.body.contrasena) {
-      res.status(400).send({
-        message: "Necesita ingresar el correo y la contraseña.",
-      });
-      return;
-    }
-
-    const usuarioObj = {
-      correo: req.body.correo,
-      contrasena: hashedPassword,
-      role: req.body.role,
+    const reservaObj = {
+      id_usuario: req.body.id_usuario,
+      id_parqueo: req.body.id_parqueo,
+      fecha_inicio: req.body.fecha_inicio,
+      fecha_fin: req.body.fecha_fin,
+      estado: "confirmada",
     };
 
-    const usuario = Usuario.build(usuarioObj);
-    const nuevoUsuario = await usuario.save().catch((err) => {
+    const reserva = Reserva.build(reservaObj);
+    const nuevaReserva = await reserva.save().catch((err) => {
       res.status(500).send({
         message:
           err.message ||
-          "Error al crear el usuario. Consulte a su administrador.",
+          "Error al crear la reserva. Consulte a su administrador.",
       });
     });
 
-    //AGREGAR OBJETOS DE HUESPED, EMPLEADO BASE
-
-    res.send(nuevoUsuario);
+    res.send(nuevaReserva);
   } catch (err) {
     res.status(500).send({ message: err.message });
-    console.log("hubo un error inesperado", err.message);
+    console.log("Hubo un error inesperado", err.message);
   }
 };
 
 exports.update = (req, res) => {
   const id = req.params.id;
 
-  Usuario.update(req.body, {
+  Reserva.update(req.body, {
     where: { id: id },
   })
     .then((num) => {
       if (num == 1) {
         res.send({
-          message: "Usuario actualizado exitosamente.",
+          message: "Reserva actualizado exitosamente.",
         });
       } else {
         res.send({
-          message: "No se pudo actualizar al usuario.",
+          message: "No se pudo actualizar la reserva.",
         });
       }
     })
     .catch((err) => {
       res.status(500).send({
-        message: "Error al actualizar el usuario.",
+        message: "Error al actualizar la reserva.",
       });
     });
 };
