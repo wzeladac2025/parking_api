@@ -14,7 +14,7 @@ exports.create = async (req, res) => {
     const reserva = Reserva.build(reservaObj);
     const nuevaReserva = await reserva.save().catch((err) => {
       res.status(500).send({
-        message:
+        mensaje:
           err.message ||
           "Error al crear la reserva. Consulte a su administrador.",
       });
@@ -22,7 +22,7 @@ exports.create = async (req, res) => {
 
     res.send(nuevaReserva);
   } catch (err) {
-    res.status(500).send({ message: err.message });
+    res.status(500).send({ mensaje: err.message });
     console.log("Hubo un error inesperado", err.message);
   }
 };
@@ -36,17 +36,17 @@ exports.update = (req, res) => {
     .then((num) => {
       if (num == 1) {
         res.send({
-          message: "Reserva actualizado exitosamente.",
+          mensaje: "Reserva actualizado exitosamente.",
         });
       } else {
         res.send({
-          message: "No se pudo actualizar la reserva.",
+          mensaje: "No se pudo actualizar la reserva.",
         });
       }
     })
     .catch((err) => {
       res.status(500).send({
-        message: "Error al actualizar la reserva.",
+        mensaje: "Error al actualizar la reserva.",
       });
     });
 };
