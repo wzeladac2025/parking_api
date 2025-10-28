@@ -34,7 +34,7 @@ exports.create = async (req, res) => {
 
     return res.status(200).send({
       mensaje: "Usuario registrado exitosamente.",
-      correo: nuevoUsuario.correo,
+      placa: nuevoUsuario.tipoPlaca + nuevoUsuario.placa,
     });
   } catch (err) {
     return res.status(500).send({ mensaje: err.message });
@@ -68,7 +68,7 @@ exports.login = async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    return res.send({ mensaje: "Sesion Iniciada.", access_token: token });
+    return res.send({ mensaje: "Sesion Iniciada.", access_token: token, id: usuario.id });
   } catch (err) {
     return res.status(401).send({ mensaje: err.message });
   }
@@ -94,6 +94,8 @@ exports.findById = async (req, res) => {
   return res.send({
     id: usuario.id,
     correo: usuario.correo,
+    nombres: usuario.nombres,
+    apellidos: usuario.apellidos,
     role: usuario.role,
   });
 };

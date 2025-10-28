@@ -15,8 +15,6 @@ exports.create = async (req, res) => {
       return;
     }
 
-    const hashedPassword = await bcrypt.hash(req.body.contrasena, 10);
-
     const usuarioObj = {
       correo: req.body.correo,
       contrasena: hashedPassword,
@@ -41,50 +39,6 @@ exports.create = async (req, res) => {
   }
 };
 
-exports.findAll = (req, res) => {
-  const nombre = req.query.correo;
-  var condition = nombre ? { nombre: { [Op.iLike]: "%${nombre}%" } } : null;
-
-  Usuario.findAll({ where: condition })
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Error al obtener los usuarios.",
-      });
-    });
-};
-
-exports.findOne = async (req, res) => {
-  try {
-    const usuario = await Usuario.findOne({
-      where: { correo: req.body.correo },
-    });
-    if (!usuario) {
-      return res.status(404).send({ message: "Usuario no encontrado." });
-    }
-
-    const validPassword = await bcrypt.compare(
-      req.body.contrasena,
-      usuario.contrasena
-    );
-    if (!validPassword) {
-      return res.status(401).send({ message: "Contraseña incorrecta." });
-    }
-
-    const token = jwt.sign(
-      { id: usuario.id, role: usuario.role },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
-    );
-
-    res.send({ message: "Login exitoso", token });
-  } catch (err) {
-    res.status(500).send({ message: err.message });
-  }
-};
-
 exports.update = (req, res) => {
   const id = req.params.id;
 
@@ -105,29 +59,6 @@ exports.update = (req, res) => {
     .catch((err) => {
       res.status(500).send({
         message: "Error al actualizar el usuario.",
-      });
-    });
-};
-
-exports.delete = (req, res) => {
-  const id = req.params.id;
-  Usuario.destroy({
-    where: { id: id },
-  })
-    .then((num) => {
-      if (num == 1) {
-        res.send({
-          message: "Usuario dado de baja.",
-        });
-      } else {
-        res.send({
-          message: "No se pudo dar de baja al usuario.",
-        });
-      }
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: "Error al dar de baja al usuario.",
       });
     });
 };

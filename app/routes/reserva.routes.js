@@ -39,6 +39,33 @@ module.exports = (app) => {
    */
   router.post("/register/", security.ROLE_TODOS, reserva.create);
 
+  /**
+   * @swagger
+   * /api/reserva/update/{id}:
+   *   put:
+   *     summary: Actualizar reserva por id
+   *     tags: [Reserva]
+   *     security:
+   *        - bearerAuth: []
+   *     parameters:
+   *        - in: path
+   *          name: id
+   *          type: string
+   *     description: Actualizar reserva por id
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *                estado:
+   *                  type: string
+   *                  enum: [confirmada, activa, cancelada, finalizada]
+   *     responses:
+   *       200:
+   *         description: Reserva actualizado
+   */
   router.put("/update/:id", security.ROLE_TODOS, reserva.update);
 
   app.use("/api/reserva", router);

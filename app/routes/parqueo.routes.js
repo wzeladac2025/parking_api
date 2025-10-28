@@ -1,5 +1,5 @@
 module.exports = (app) => {
-  const security = require("../config/security.config.js")
+  const security = require("../config/security.config.js");
   const parqueo = require("../controllers/parqueo.controller.js");
   var router = require("express").Router();
 
@@ -19,7 +19,7 @@ module.exports = (app) => {
    */
   router.get("/generar/", parqueo.generarParqueos);
 
-    /**
+  /**
    * @swagger
    * /api/parqueo/obtener/:
    *   get:
@@ -53,14 +53,14 @@ module.exports = (app) => {
    */
   router.get("/:id", security.ROLE_TODOS, parqueo.findById);
 
-      /**
+  /**
    * @swagger
    * /api/parqueo/update/{id}:
    *   put:
    *     summary: Actualizar parqueo por id
    *     tags: [Parqueo]
    *     security:
-   *        - bearerAuth: [] 
+   *        - bearerAuth: []
    *     parameters:
    *        - in: path
    *          name: id
@@ -79,7 +79,7 @@ module.exports = (app) => {
    *     responses:
    *       200:
    *         description: Parqueo actualizado
-   */  
+   */
   router.put("/update/:id", security.ROLE_TODOS, parqueo.update);
 
   app.use("/api/parqueo", router);
